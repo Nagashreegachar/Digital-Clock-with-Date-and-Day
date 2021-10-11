@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>digital clock</title>
+    <style media="screen">
+      body{
+        background-color:black;
+      }
+      .Clock {
+        position: absolute;
+        color: rgb(0, 13, 128);
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        background-color: rgb(5, 148, 0);
+        width: 25%;
+        height: 29%;
+        text-align: center;
+        border-radius: 18%;
+        border-style: double;
+        border-width: thick;
+        border-color: rgb(161, 77, 161);
+       
+      }
+      #digitalclock{
+        font-size: 50px;
+        letter-spacing: 7px;
+        margin-top: 15px;
+      }
+
+      #digitaldate{
+        font-size: 40px;
+        letter-spacing: 6px;
+        margin-top: 10px;
+      }
+
+      #day{
+        font-size: 30px;
+        letter-spacing: 6px;
+      }
+      
+
+    </style>
+  </head>
+  <body>
+   <div id=Clock class="Clock">
+          <div id="digitalclock">
+
+          </div>
+      <div id="digitaldate">
+      </div>
+      <p id="day"></p>
+    </div>
+    <script type="text/javascript">
+  function showTime(){
+      var date= new Date();
+      var h=date.getHours();
+      var m=date.getMinutes();
+      var s=date.getSeconds();
+      var y=date.getFullYear();
+      var mo=date.getMonth();
+      var dt=date.getDate();
+      var day=date.getDay();
+      var session="am";
+      if(h==0){
+        h=12;
+      }
+
+      if(h>12){
+        h=h-12;
+      }
+      if(h>=12)
+      {
+        session="pm";
+      }
+
+      if(mo==0)
+      {
+        mo=1;
+      }
+      if(mo>1){
+          mo=mo+1;
+      }
+
+      switch(day){
+          case 0:
+              day= "Sunday";
+              break;
+          case 1:
+              day= "Monday";
+              break;
+          case 2: 
+              day= "Tuesday";
+              break;
+          case 3:
+              day="Wednesday";
+              break;
+          case 4:
+              day="Thursday";
+              break;
+          case 5:
+              day="Friday";
+              break;
+          case 6:
+              day= "saturday";
+              break;
+          default:
+              return "incorrect";
+         }
+
+         h=(h<10) ? "0" + h : h;
+         m= (m<10) ? "0" + m: m;
+         s= (s<10) ? "0" + s: s;
+         dt = (dt<10) ? "0" + dt: dt;
+         mo = (mo<10) ? "0" + mo: mo;
+
+      document.getElementById("digitalclock").innerHTML=h + ":" + m + ":" + s + "" + session; 
+      document.getElementById("digitaldate").innerHTML=dt + "/" + mo + "/" + y;
+      document.getElementById("day").innerHTML=day;
+    setTimeout(showTime,1000);
+
+  }
+  showTime();
+    </script>
+  </body>
+</html>
