@@ -1,0 +1,62 @@
+select 
+CUST.NAME,
+CASE 
+	WHEN CUST.NAME == "Anupam Guha" 
+	THEN "Wealth" 
+	WHEN CUST.NAME == "Harvinder Jaspal"
+	THEN "Operations and Compliance"
+	WHEN CUST.NAME == "Kedar Deshpande"
+	THEN "Retail & Distribution"
+	WHEN CUST.NAME == "Vishal Gulechha"
+	THEN "EPG"
+	WHEN CUST.NAME == "Ketan Karkhanis" || CUST.NAME == "Others" || CUST.NAME == "R Balaji"
+	THEN "Others"
+ELSE 
+         R.PROJECT_NAME 
+END AS PROJECTNAME,
+SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME == 'Completed' THEN 1 ELSE 0 END) AS GOLIVE,
+SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Accepted' || R.REQUIREMENT_STATUS_NAME = 'Planned' THEN 1 ELSE 0 END) AS DEVELOPMENT_TO_BE_INITIATED,
+SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'In Progress' THEN 1 ELSE 0 END) AS INDEVELOPMENT,
+SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Developed' || R.REQUIREMENT_STATUS_NAME = 'Tested' THEN 1 ELSE 0 END) AS INUAT,
+SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Requested' || R.REQUIREMENT_STATUS_NAME = 'Under Review' THEN 1 ELSE 0 END) AS Requested,
+SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Rejected' THEN 1 ELSE 0 END) AS REJECTED,
+COUNT(R.REQUIREMENT_STATUS_NAME) AS GRAND_TOTAL
+ 
+from SpiraTestEntities.R_Projects as Project
+left join SpiraTestEntities.R_Requirements as R
+on R.PROJECT_ID  in (select value Proj.Project_ID  from SpiraTestEntities.R_Projects as Proj where Proj.IS_Active = True) 
+AND
+R.IS_DELETED = false
+ 
+left join SpiraTestEntities.R_CustomListValues as CUST
+on CAST(R.CUST_05 AS int32) = CUST.CUSTOM_PROPERTY_VALUE_ID
+AND 
+CUST.PROJECT_ID in (select value Proj.Project_ID  from SpiraTestEntities.R_Projects as Proj where Proj.IS_Active = True) 
+where
+Project.IS_Active = True
+group by R.PROJECT_NAME, CUST.NAME
+
+-------------------------------------------------------------
+select R.CUST_05
+-- ,
+-- SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME == 'Completed' THEN 1 ELSE 0 END) AS GOLIVE,
+-- SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Accepted' || R.REQUIREMENT_STATUS_NAME = 'Planned' THEN 1 ELSE 0 END) AS DEVELOPMENT_TO_BE_INITIATED,
+-- SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'In Progress' THEN 1 ELSE 0 END) AS INDEVELOPMENT,
+-- SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Developed' || R.REQUIREMENT_STATUS_NAME = 'Tested' THEN 1 ELSE 0 END) AS INUAT,
+-- SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Requested' || R.REQUIREMENT_STATUS_NAME = 'Under Review' THEN 1 ELSE 0 END) AS Requested,
+-- SUM(CASE WHEN R.REQUIREMENT_STATUS_NAME = 'Rejected' THEN 1 ELSE 0 END) AS REJECTED,
+-- COUNT(R.REQUIREMENT_STATUS_NAME) AS GRAND_TOTAL
+from 
+  SpiraTestEntities.R_Requirements as R 
+left join SpiraTestEntities.R_CustomListValues as C05 
+on 
+cast(R.CUST_05 as int32) = C05.CUSTOM_PROPERTY_VALUE_ID
+and
+C05.PROJECT_ID in (select value Proj.Project_ID  from SpiraTestEntities.R_Projects as Proj where Proj.IS_Active = True) 
+and 
+C05.IS_DELETED = False
+ 
+WHERE R.IS_DELETED = False
+and 
+R.PROJECT_ID in (select value Proj.Project_ID  from SpiraTestEntities.R_Projects as Proj where Proj.IS_Active = True) 
+-- group by R.CUST_05
